@@ -22,7 +22,8 @@ function makeRequest(verb, url) {
 
 
 // Asyncronous function that make a request for the makeRequest function and awaits for the Promise
-// to resolve. Then it returns the JSON response as products. 
+// to resolve. Then it passes the JSON response into the const products and calls the buildItems
+// function passing products as an argument. 
 // 
 
 async function loadProducts() {
@@ -32,6 +33,9 @@ async function loadProducts() {
     buildItems(products);
 
 };
+
+// Build an item with it's elements and attributes for each product in the products JSON response. 
+// Then appends the items to the section of id="item".
 
 function buildItems(products) {
     for (let i = 0; i < products.length; i++) {
