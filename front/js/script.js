@@ -31,6 +31,7 @@ async function loadProducts() {
     const products = await requestPromise;
     
     buildItems(products);
+   
 
 };
 
@@ -55,7 +56,7 @@ function buildItems(products) {
         article.append(img, h3, p);
 
         item = document.createElement("a");
-        item.href = "./product.html?id=" + product._id;
+        item.href = "./product.html?productId=" + product._id;
         item.appendChild(article);
 
         document.getElementById("items").appendChild(item);
@@ -65,6 +66,9 @@ function buildItems(products) {
 
 
 loadProducts();
+
+
+
 
 
 
