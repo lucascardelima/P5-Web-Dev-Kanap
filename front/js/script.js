@@ -27,12 +27,8 @@ function makeRequest(verb, url) {
 // 
 
 async function loadProducts() {
-    const requestPromise = makeRequest("GET", "http://localhost:3000/api/products");
-    const products = await requestPromise;
-    
+    let products = await makeRequest("GET", "http://localhost:3000/api/products");
     buildItems(products);
-   
-
 };
 
 // Build an item with it's elements and attributes for each product in the products JSON response. 
@@ -63,7 +59,6 @@ function buildItems(products) {
 
     }
 };
-
 
 loadProducts();
 
