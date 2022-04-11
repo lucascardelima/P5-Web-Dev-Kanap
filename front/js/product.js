@@ -1,3 +1,9 @@
+// Call DOM elements
+
+const addToCartBtn = document.getElementById('addToCart');
+const itemQuantity = document.getElementById('quantity');
+const itemColor = document.getElementById('colors');
+
 // Get the current URL, search for the query string and returns the product ID that was passed as one of the parameters.
 
 function getProductId() {
@@ -55,14 +61,73 @@ function buildProductPage(product) {
 // 
 
 async function loadProducts() {
-    const requestPromise = makeRequest("GET", "http://localhost:3000/api/products");
-    const products = await requestPromise;
-    
+    const products =  await makeRequest("GET", "http://localhost:3000/api/products");
     const id = getProductId();
     const product = products.find(products => products._id == id);
     
     buildProductPage(product);
+};
+
+const CART = {
+    KEY: 'lucasCart',
+    contents: [],
+    init: function() {
+        let products = localStorage.getItem(CART.KEY);
+        if(products) {
+            CART.contents = JSON.parse(products);
+        } else{
+            CART.contents = [];
+            CART.sync();
+        }
+    },
+    sync: async function() {
+        let productCart = JSON.stringify(CART.contents);
+        await localStorage.setItem(CART.KEY, productCart);
+    },
+    find: function(id, productColor) {
+        let matchProduct = CART.contents.find(matchProduct => matchProduct._id == id && matchProduct.color == productColor);
+        return matchProduct;
+    },
+    add: function(id, productColor, qty) {
+        if(CART.find(id, productColor)) {
+            CART.increase(id, productColor, qty);
+        }else {
+            let productObject = {'_id' : id, 'quantity' : qty, 'color' : productColor};
+            CART.contents.push(productObject);
+            CART.sync();
+        }
+    },
+    increase: function(id, productColor, qty) {
+        CART.contents = CART.contents.map(product => {
+            if(product._id == id && product.color == productColor) {
+                product.quantity = Number(product.quantity) + qty;
+            }
+            return product;
+            
+        });
+        console.log(CART.contents);
+        CART.sync();
+    }
+
 
 };
 
+
+function storageProductDetails() {
+    const id = getProductId();
+    const qty = Number(itemQuantity.value);
+    const productColor = itemColor.value;
+
+    CART.add(id, productColor, qty);
+
+
+}
+
+
+
+
 loadProducts();
+
+window.addEventListener('load', CART.init());
+addToCartBtn.addEventListener("click", storageProductDetails);
+
