@@ -45,6 +45,7 @@ function buildProductPage(product) {
     document.getElementById("productImage").src = product.imageUrl;
     document.getElementById("productImage").alt = product.altTxt;
     document.getElementById("description").textContent = product.description;
+    document.getElementById("pageTitle").textContent = product.name;
     
     for (let i = 0; i < product.colors.length; i++) {
         option = document.createElement("option");
@@ -69,7 +70,7 @@ async function loadProducts() {
 };
 
 const CART = {
-    KEY: 'lucasCart',
+    KEY: 'cart',
     contents: [],
     init: function() {
         let products = localStorage.getItem(CART.KEY);
