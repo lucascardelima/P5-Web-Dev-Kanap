@@ -73,20 +73,106 @@ const CART = {
 
 // Receive the product object, select the DOM elements and pass the product's information to the DOM.
 
-function buildCartPage(product) {
-    document.getElementById("price").textContent = product.price;
-    document.getElementById("title").textContent = product.name;
-    document.getElementById("productImage").src = product.imageUrl;
-    document.getElementById("productImage").alt = product.altTxt;
-    document.getElementById("description").textContent = product.description;
-    document.getElementById("pageTitle").textContent = product.name;
-    
-    for (let i = 0; i < product.colors.length; i++) {
-        option = document.createElement("option");
-        option.value = product.colors[i];
-        option.textContent = product.colors[i];
-        dropdown = document.getElementById("colors").appendChild(option);
+function buildCartPage(products, cart) {
+    let cartContainer = document.querySelector("#cart__items");
+    for (let i = 0; i < cart.length; i++) {
+        const cartProductId = cart[i]._id;
+        const cartProductColor = cart[i].color;
+        const cartProductQty = cart[i].quantity;
+        const productDetails = products.find(product => product._id == cartProductId);
+
+        //Start creating the elements on the DOM.
+        
+        /////ARTICLE ELEMENT.
+        let article = document.createElement("article");
+        article.classList.add("cart__item");
+        article.setAttribute("data-id", cartProductId);
+        article.setAttribute("data-color", cartProductColor);
+
+        ////IMAGE CONTAINER.
+        let imgContainer = document.createElement("div");
+        imgContainer.classList.add("cart__item__img");
+
+        //Image ELEMENT and ATTRIBUTES.
+        let img = document.createElement("img");
+        img.setAttribute("src", productDetails.imageUrl);
+        img.setAttribute("alt", productDetails.altTxt)
+
+        //Append Image to IMAGE CONTAINER.
+        imgContainer.appendChild(img);
+
+        ////DESCRIPTION AND SETTINGS CONTAINER .
+        let descriptionAndSettingsContainer = document.createElement("div");
+        descriptionAndSettingsContainer.classList.add("cart__item__content");
+
+        ///DESCRIPTION CONTAINER.
+        let descriptionContainer = document.createElement("div");
+        descriptionContainer.classList.add("cart__item__content__description");
+
+        //Product Name ELEMENT.
+        let productName = document.createElement("h2");
+        productName.innerHTML = productDetails.name;
+
+        //Produc Color ELEMENT.
+        let productColor = document.createElement("p");
+        productColor.innerHTML = cartProductColor;
+
+        //Product Price ELEMENT.
+        let productPrice = document.createElement("p");
+        productPrice.innerHTML = "€" + productDetails.price;
+
+        //Append Name, Color and Price to the DESCRIPTION CONTAINER.
+        descriptionContainer.append(productName, productColor, productPrice);
+
+        ///SETTINGS CONTAINER.
+        let settingsContainer = document.createElement("div");
+        settingsContainer.classList.add("cart__item__content__settings");
+
+        //Quantity Container.
+        let quantityContainer = document.createElement("div");
+        quantityContainer.classList.add("cart__item__content__settings__quantity");
+
+        //Quantity Display ELEMENT.
+        let quantityDisplay = document.createElement("p");
+        quantityDisplay.innerHTML = "Qté: " + cartProductQty;
+
+        //Quantity Input ELEMENT.
+        let quantityInput = document.createElement("input");
+        quantityInput.setAttribute("id", "quantity");
+        quantityInput.setAttribute("type", "number");
+        quantityInput.setAttribute("min", "1");
+        quantityInput.setAttribute("max", "99");
+        quantityInput.setAttribute("value", cartProductQty);
+
+        //Append Display and Input into Quantity Container.
+        quantityContainer.append(quantityDisplay, quantityInput);
+
+        //Delete Button Container.
+        let deleteButtonContainer = document.createElement("div");
+        deleteButtonContainer.classList.add("cart__item__content__settings__delete");
+
+        //Delete Button ELEMENT.
+        let deleteButton = document.createElement("p");
+        deleteButton.classList.add("deleteItem");
+        deleteButton.innerHTML = "Delete";
+
+        //Append Delete Button into Delete Button Container.
+        deleteButtonContainer.appendChild(deleteButton);
+
+        //Append the quantity container and delete button container to the settings container.
+        settingsContainer.append(quantityContainer, deleteButtonContainer);
+
+        //Append the description container and settings container to the description and settings container.
+        descriptionAndSettingsContainer.append(descriptionContainer, settingsContainer);
+
+        //Append the image container and description and settings container to the article.
+        article.append(imgContainer, descriptionAndSettingsContainer);
+
+        //Append the article to the cart container.
+        cartContainer.appendChild(article);
     }
+
+
 
 };
 
@@ -96,8 +182,8 @@ function buildCartPage(product) {
 
 async function loadCart() {
     const products =  await makeRequest("GET", "http://localhost:3000/api/products");
-    const cart = 
-    buildCartPage(products);
+    const cart = CART.get();
+    buildCartPage(products, cart);
 };
 
-loadCart()
+loadCart();
