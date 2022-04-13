@@ -75,6 +75,8 @@ const CART = {
         });
         CART.sync();
     },
+    // Function for the event listener on the delete button. It takes the id and color of the product and
+    // filters the cart to remove the product.
     delete: function(id, color) {
         CART.contents = CART.contents.filter(product => {
             return product._id != id || product.color != color;
@@ -88,6 +90,7 @@ const CART = {
 
 function buildCartPage(products, cart) {
     let cartContainer = document.querySelector("#cart__items");
+    cartContainer.innerHTML = "";
     for (let i = 0; i < cart.length; i++) {
         const cartProductId = cart[i]._id;
         const cartProductColor = cart[i].color;
@@ -201,22 +204,27 @@ async function loadCart() {
 
 loadCart();
 
+// Function for the event listener quantity input. It takes the id of the product and the color of the product and
+// the quantity of the product and calls the change function passing the id, color and quantity as arguments.
 function changeQuantity(event) {
     if (event.target.id == "itemQuantity") {
         let id = event.target.closest("article").getAttribute("data-id");
         let color = event.target.closest("article").getAttribute("data-color");
         let qty = event.target.value;
         CART.change(id, color, qty);
+        loadCart();
 
     }
 };
 
+// Function for the event listener on the delete button. It takes the id and color of the product and 
+// calls the delete function passing the id and color as arguments. 
 function deleteItem(event) {
     if (event.target.classList == "deleteItem") {
         let id = event.target.closest("article").getAttribute("data-id");
         let color = event.target.closest("article").getAttribute("data-color");
-        let qty = event.target.value;
         CART.delete(id, color);
+        loadCart();
     }
 };
 
