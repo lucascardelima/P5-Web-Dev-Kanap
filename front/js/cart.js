@@ -64,10 +64,23 @@ const CART = {
             return product;
             
         });
-        console.log(CART.contents);
+        CART.sync();
+    },
+    change: function(id, color, qty) {
+        CART.contents = CART.contents.map(product => {
+            if(product._id == id && product.color == color) {
+                product.quantity = qty;
+            }
+            return product;
+        });
+        CART.sync();
+    },
+    delete: function(id, color) {
+        CART.contents = CART.contents.filter(product => {
+            return product._id != id || product.color != color;
+        });
         CART.sync();
     }
-
 
 };
 
@@ -119,7 +132,7 @@ function buildCartPage(products, cart) {
 
         //Product Price ELEMENT.
         let productPrice = document.createElement("p");
-        productPrice.innerHTML = "€" + productDetails.price;
+        productPrice.innerHTML = "€" + (productDetails.price * cartProductQty);
 
         //Append Name, Color and Price to the DESCRIPTION CONTAINER.
         descriptionContainer.append(productName, productColor, productPrice);
@@ -138,7 +151,7 @@ function buildCartPage(products, cart) {
 
         //Quantity Input ELEMENT.
         let quantityInput = document.createElement("input");
-        quantityInput.setAttribute("id", "quantity");
+        quantityInput.setAttribute("id", "itemQuantity");
         quantityInput.setAttribute("type", "number");
         quantityInput.setAttribute("min", "1");
         quantityInput.setAttribute("max", "99");
@@ -187,3 +200,33 @@ async function loadCart() {
 };
 
 loadCart();
+
+function changeQuantity(event) {
+    if (event.target.id == "itemQuantity") {
+        let id = event.target.closest("article").getAttribute("data-id");
+        let color = event.target.closest("article").getAttribute("data-color");
+        let qty = event.target.value;
+        CART.change(id, color, qty);
+
+    }
+};
+
+function deleteItem(event) {
+    if (event.target.classList == "deleteItem") {
+        let id = event.target.closest("article").getAttribute("data-id");
+        let color = event.target.closest("article").getAttribute("data-color");
+        let qty = event.target.value;
+        CART.delete(id, color);
+    }
+};
+
+// Get the Quantity Changer button and adds an event listener to it.
+const changeQuantityInput = document.getElementById("cart__items");
+changeQuantityInput.addEventListener("change", changeQuantity);
+
+// Get the Delete Button and adds an event listener to it.
+const deleteButton = document.getElementById("cart__items");
+deleteButton.addEventListener("click", deleteItem);
+
+
+
