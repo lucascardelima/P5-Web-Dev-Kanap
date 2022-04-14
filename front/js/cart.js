@@ -262,6 +262,8 @@ changeQuantityInput.addEventListener("change", changeQuantity);
 const deleteButton = document.getElementById("cart__items");
 deleteButton.addEventListener("click", deleteItem);
 
+//// EVENT LISTENERS ////
+
 
 // Asyncronous function that make a request for the makeRequest function and awaits for the Promise
 // to resolve. Then it passes the JSON response into the const products and calls the buildItems
@@ -270,10 +272,10 @@ deleteButton.addEventListener("click", deleteItem);
 async function loadCart() {
     const products =  await makeRequest("GET", "http://localhost:3000/api/products");
     const cart = CART.get();
-    buildCartPage(products, cart);
 
+    buildCartPage(products, cart);   
 };
 
-// Call the function to Load the cart contents into the DOM. 
+// Call the Asyncronous function to load the cart contents into the DOM. 
 
 loadCart();
