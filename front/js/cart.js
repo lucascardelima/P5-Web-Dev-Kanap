@@ -88,7 +88,7 @@ const CART = {
 
 // Receive the product object, select the DOM elements and pass the product's information to the DOM.
 
-function buildCartPage(products, cart) {
+function createProducts(products, cart) {
     let cartContainer = document.querySelector("#cart__items");
     cartContainer.innerHTML = "";
     for (let i = 0; i < cart.length; i++) {
@@ -187,31 +187,54 @@ function buildCartPage(products, cart) {
         //Append the article to the cart container.
         cartContainer.appendChild(article);
     }
-
-
-
 };
 
-// Asyncronous function that make a request for the makeRequest function and awaits for the Promise
-// to resolve. Then it passes the JSON response into the const products and calls the buildItems
-// function passing products as an argument. 
+// Function that receices the products from the backend and the cart from the local storage as arguments, then
+// iterates through them calculating the total items in the cart and the total price using the price from the products array
+// and the quantity storage in the cart. Finally, it returns the two values;
 
-async function loadCart() {
-    const products =  await makeRequest("GET", "http://localhost:3000/api/products");
-    const cart = CART.get();
-    buildCartPage(products, cart);
+function calculateTotals(products, cart) {
+    let totalItems = 0;
+    let totalPrice = 0;
+    for (let i = 0; i < cart.length; i++) {
+        totalItems += parseInt(cart[i].quantity);
+        totalPrice += products.find(product => product._id == cart[i]._id).price * cart[i].quantity;
+        
+    }
+    return [totalItems, totalPrice];
+    
+}
+
+// Function that receives the total items and total price as arguments,
+// then, captures the elements to display the totals and pass into the elements the totals;
+
+function displayTotals(totalItems, totalPrice) {
+    let totalItemsElement = document.querySelector("#totalQuantity");
+    let totalPriceElement = document.querySelector("#totalPrice");
+    totalItemsElement.innerHTML = totalItems;
+    totalPriceElement.innerHTML = totalPrice;
+}
+
+// Funtion that builds the Cart page received the products from the backend and the cart from the localstorage
+// as arguments, then calls the function that creates the products into the DOM. Calls the functions that calculates the totals
+// and gets the returned values, then passes into the displaytotals function;
+
+function buildCartPage(products, cart) {
+    createProducts(products, cart);
+    let [totalItems, totalPrice] = calculateTotals(products, cart);
+    displayTotals(totalItems, totalPrice);
 };
-
-loadCart();
 
 // Function for the event listener quantity input. It takes the id of the product and the color of the product and
 // the quantity of the product and calls the change function passing the id, color and quantity as arguments.
+
 function changeQuantity(event) {
     if (event.target.id == "itemQuantity") {
         let id = event.target.closest("article").getAttribute("data-id");
         let color = event.target.closest("article").getAttribute("data-color");
         let qty = event.target.value;
         CART.change(id, color, qty);
+
         loadCart();
 
     }
@@ -219,6 +242,7 @@ function changeQuantity(event) {
 
 // Function for the event listener on the delete button. It takes the id and color of the product and 
 // calls the delete function passing the id and color as arguments. 
+
 function deleteItem(event) {
     if (event.target.classList == "deleteItem") {
         let id = event.target.closest("article").getAttribute("data-id");
@@ -227,6 +251,8 @@ function deleteItem(event) {
         loadCart();
     }
 };
+
+//// EVENT LISTENERS ////
 
 // Get the Quantity Changer button and adds an event listener to it.
 const changeQuantityInput = document.getElementById("cart__items");
@@ -237,4 +263,17 @@ const deleteButton = document.getElementById("cart__items");
 deleteButton.addEventListener("click", deleteItem);
 
 
+// Asyncronous function that make a request for the makeRequest function and awaits for the Promise
+// to resolve. Then it passes the JSON response into the const products and calls the buildItems
+// function passing products as an argument. 
 
+async function loadCart() {
+    const products =  await makeRequest("GET", "http://localhost:3000/api/products");
+    const cart = CART.get();
+    buildCartPage(products, cart);
+
+};
+
+// Call the function to Load the cart contents into the DOM. 
+
+loadCart();
