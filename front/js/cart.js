@@ -1,22 +1,27 @@
 // Make a XMLHttp request receiving a VERB and the API URL as an argument and returning a promisse
 // Promise object witht the response resolved from the API in JSON format. 
 
-function makeRequest(verb, url) {
+function makeRequest(verb, url, orderDetails) {
     return new Promise((resolve, reject) => {
         let request = new XMLHttpRequest();
         
         request.onreadystatechange = () => {
             if (request.readyState === 4) {
-                if (request.status === 200) {
+                if (request.status === 201 || request.status === 200) {
                     resolve(JSON.parse(request.response));
                 } else {
                     reject(JSON.parse(request.response));
                 }
             }
-        }
-        
-        request.open(verb, url);
-        request.send();
+        };
+        if (verb == "POST") {
+            request.open(verb, url);
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(JSON.stringify(orderDetails));
+        } else {
+            request.open(verb, url);
+            request.send();
+        };
     });
 };
 
@@ -270,7 +275,7 @@ deleteButton.addEventListener("click", deleteItem);
 // function passing products as an argument. 
 
 async function loadCart() {
-    const products =  await makeRequest("GET", "http://localhost:3000/api/products");
+    const products =  await makeRequest("GET", "http://127.0.0.1:3000/api/products");
     const cart = CART.get();
 
     buildCartPage(products, cart);   
@@ -279,3 +284,122 @@ async function loadCart() {
 // Call the Asyncronous function to load the cart contents into the DOM. 
 
 loadCart();
+
+
+
+
+// Function to create the variables containing the form elements passing the array formFields as a paramenter
+// then calls the function creating the variables.
+
+const formsFields = ["FirstName", "LastName", "Address", "City", "Email"];
+
+function getDOMElements(formFields) {
+    for (i=0; i<formFields.length; i++) {
+        this["contact" + formFields[i]] = document.getElementById(formFields[i]);
+    }
+    for (i=0; i<formFields.length; i++) {
+        this["contact" + formFields[i] + "ErrorMsg"] = document.getElementById("errorMsg" + formFields[i]);
+    }
+};
+
+getDOMElements(formsFields);
+
+// RegEx expressions
+
+const regexFirstName = new RegExp(/[A-Za-z]\s*/);
+const regexLastName = new RegExp(/\b([A-Za-z][-,a-z. ']+[ ]*)+/);
+const regexAddress = new RegExp(/\d{1,5}(\s\w*)*/);
+const regexCity = new RegExp(/\w*\s*/);
+const regexEmail = new RegExp(/\S+@\S+\.\S+/);
+
+// Validation functions
+
+
+contactFirstName.addEventListener("blur", function() {
+    if (regexFirstName.test(contactFirstName.value)) {
+        contactFirstNameErrorMsg.innerHTML = "";
+    } else {
+        contactFirstNameErrorMsg.innerHTML = "Please enter a valid name";
+    }
+});
+
+contactLastName.addEventListener("blur", function() {
+    if (regexLastName.test(contactLastName.value)) {
+        contactLastNameErrorMsg.innerHTML = "";
+    } else {
+        contactLastNameErrorMsg.innerHTML = "Please enter a valid last name";
+    }
+});
+
+contactAddress.addEventListener("blur", function() {
+    if (regexAddress.test(contactAddress.value)) {
+        contactAddressErrorMsg.innerHTML = "";
+    } else {
+        contactAddressErrorMsg.innerHTML = "Please enter a valid address";
+    }
+});
+
+contactCity.addEventListener("blur", function() {
+    if (regexCity.test(contactCity.value)) {
+        contactCityErrorMsg.innerHTML = "";
+    } else {
+        contactCityErrorMsg.innerHTML = "Please enter a valid city";
+    }
+});
+
+contactEmail.addEventListener("blur", function() {
+    if (regexEmail.test(contactEmail.value)) {
+        contactEmailErrorMsg.innerHTML = "";
+    } else {
+        contactEmailErrorMsg.innerHTML = "Please enter a valid email";
+    }
+});
+
+function validateForm() {
+    if (regexFirstName.test(contactFirstName.value) && regexLastName.test(contactLastName.value) && regexAddress.test(contactAddress.value) && regexCity.test(contactCity.value) && regexEmail.test(contactEmail.value)) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
+
+function getFormValues() {
+    if (validateForm()) {
+        let formValues = {
+            firstName: contactFirstName.value,
+            lastName: contactLastName.value,
+            address: contactAddress.value,
+            city: contactCity.value,
+            email: contactEmail.value
+        };
+        return formValues;
+    }
+};
+
+function buildIdArray() {
+    let idArray = [];
+    let cart = CART.get();
+    for (let i=0; i<cart.length; i++) {
+        idArray.push(cart[i]._id);
+    }
+    return idArray;
+}
+
+async function sendOrder() {
+    let contact = getFormValues();
+    let products = buildIdArray();
+    let orderDetails = {
+        contact: contact,
+        products: products
+    };
+    let orderNumber = await makeRequest("POST", "http://127.0.0.1:3000/api/products/order", orderDetails);
+    return orderNumber;
+}
+
+document.getElementById('order').addEventListener('click', async function(event) {
+    event.preventDefault();
+    let orderNumber = await sendOrder();
+    console.log(orderNumber);
+});
+
