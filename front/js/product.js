@@ -124,9 +124,6 @@ function storageProductDetails() {
 
 }
 
-
-
-
 loadProducts();
 
 window.addEventListener('load', CART.init());
