@@ -12,9 +12,6 @@ function getProductId() {
     return productId = urlParams.get("productId");
 }
 
-
-
-
 // Make a XMLHttp request receiving a VERB and the API URL as an argument and returning a promisse
 // Promise object witht the response resolved from the API in JSON format. 
 
@@ -58,8 +55,7 @@ function buildProductPage(product) {
 
 // Asyncronous function that make a request for the makeRequest function and awaits for the Promise
 // to resolve. Then it passes the JSON response into the const products and calls the buildItems
-// function passing products as an argument. 
-// 
+// function passing products as an argument;
 
 async function loadProducts() {
     const products =  await makeRequest("GET", "http://localhost:3000/api/products");
@@ -68,6 +64,12 @@ async function loadProducts() {
     
     buildProductPage(product);
 };
+
+// Calls the function
+
+loadProducts();
+
+// CART object that stores the product's information in the local storage;
 
 const CART = {
     KEY: 'cart',
@@ -81,14 +83,17 @@ const CART = {
             CART.sync();
         }
     },
+    // Syncs the cart with the local storage;
     sync: async function() {
         let productCart = JSON.stringify(CART.contents);
         await localStorage.setItem(CART.KEY, productCart);
     },
+    // Loops through the cart contents array looking for the product with macthing id and color and returns the product;
     find: function(id, productColor) {
         let matchProduct = CART.contents.find(matchProduct => matchProduct._id == id && matchProduct.color == productColor);
         return matchProduct;
     },
+    // Adds a product to the cart contents array, passing the ID, color and quantity as arguments and syncs it to the local storage;
     add: function(id, productColor, qty) {
         if(CART.find(id, productColor)) {
             CART.increase(id, productColor, qty);
@@ -98,21 +103,13 @@ const CART = {
             CART.sync();
         }
     },
-    increase: function(id, productColor, qty) {
-        CART.contents = CART.contents.map(product => {
-            if(product._id == id && product.color == productColor) {
-                product.quantity = Number(product.quantity) + qty;
-            }
-            return product;
-            
-        });
-        console.log(CART.contents);
-        CART.sync();
-    }
-
-
 };
 
+// Adds a event listener to the window object that listens for the page load event and calls the CART.init method to initialize the cart;
+
+window.addEventListener('load', CART.init());
+
+// Adds a product to the cart contents array, passing the ID, color and quantity as arguments;
 
 function storageProductDetails() {
     const id = getProductId();
@@ -120,12 +117,9 @@ function storageProductDetails() {
     const productColor = itemColor.value;
 
     CART.add(id, productColor, qty);
+};
 
+// Adds a event listener to the addToCart button that listens for the click event and calls the storageProductDetails function;
 
-}
-
-loadProducts();
-
-window.addEventListener('load', CART.init());
 addToCartBtn.addEventListener("click", storageProductDetails);
 
