@@ -403,7 +403,9 @@ orderButton.addEventListener('click', async function(event) {
     event.preventDefault();
     let orderObject = await sendOrder();
     let confirmationHref = 'http://127.0.0.1:3001/front/html/confirmation.html?orderId=' + orderObject.orderId;
-    window.location.href = confirmationHref;
     CART.contents = [];
+    CART.sync();
+    window.location.href = confirmationHref;
+   
 });
 
