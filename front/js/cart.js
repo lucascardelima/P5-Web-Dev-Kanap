@@ -393,13 +393,17 @@ async function sendOrder() {
         contact: contact,
         products: products
     };
-    let orderNumber = await makeRequest("POST", "http://127.0.0.1:3000/api/products/order", orderDetails);
-    return orderNumber;
+    let orderObject = await makeRequest("POST", "http://127.0.0.1:3000/api/products/order", orderDetails);
+    return orderObject;
 }
 
-document.getElementById('order').addEventListener('click', async function(event) {
+const orderButton = document.getElementById('order');
+
+orderButton.addEventListener('click', async function(event) {
     event.preventDefault();
-    let orderNumber = await sendOrder();
-    console.log(orderNumber);
+    let orderObject = await sendOrder();
+    let confirmationHref = 'http://127.0.0.1:3001/front/html/confirmation.html?orderId=' + orderObject.orderId;
+    window.location.href = confirmationHref;
+    CART.contents = [];
 });
 
