@@ -304,15 +304,15 @@ function getDOMElements(formFields) {
 
 getDOMElements(formsFields);
 
-// RegEx expressions
+// RegEx expressions to validade each form field;
 
-const regexFirstName = new RegExp(/[A-Za-z]\s*/);
-const regexLastName = new RegExp(/\b([A-Za-z][-,a-z. ']+[ ]*)+/);
-const regexAddress = new RegExp(/\d{1,5}(\s\w*)*/);
-const regexCity = new RegExp(/\w*\s*/);
-const regexEmail = new RegExp(/\S+@\S+\.\S+/);
+const regexFirstName = new RegExp(/^(([a-zA-Z]{1,})[ -]?){1,}$/g);
+const regexLastName = new RegExp(/^(([a-zA-Z]{1,})[ -]?){1,}$/g);
+const regexAddress = new RegExp(/^(\d{1,5}){1}[ -]?(([a-zA-Z]{1,})[ -]?){1,}$/);
+const regexCity = new RegExp(/^(\w{1,})[ -]?$/);
+const regexEmail = new RegExp(/^(\w{1,})(\@{1})(\w{1,}[.])+((\w{1,})[ ]?)$/);
 
-// Validation functions
+// Validation functions for every form field;
 
 
 contactFirstName.addEventListener("blur", function() {
@@ -355,6 +355,9 @@ contactEmail.addEventListener("blur", function() {
     }
 });
 
+// Formula to check if all the field within the form are valid. If all the fields are valid,
+// the function returns true, otherwise, it returns false;
+
 function validateForm() {
     if (regexFirstName.test(contactFirstName.value) && regexLastName.test(contactLastName.value) && regexAddress.test(contactAddress.value) && regexCity.test(contactCity.value) && regexEmail.test(contactEmail.value)) {
         return true;
@@ -363,6 +366,7 @@ function validateForm() {
     }
 };
 
+// Function that compile all the values entered in the form and returns them as an object;
 
 function getFormValues() {
     if (validateForm()) {
@@ -377,6 +381,9 @@ function getFormValues() {
     }
 };
 
+// Function that get all the products from the CART object, iterate over it and create a new array
+// with the products IDs and return the array;
+
 function buildIdArray() {
     let idArray = [];
     let cart = CART.get();
@@ -385,6 +392,10 @@ function buildIdArray() {
     }
     return idArray;
 }
+
+// Function that gets the object containing the form values and the array of product IDs and creates
+// a new object with them. Then, it calls the makeRequest function passing the "POST" verb, the URL and
+// the object as arguments to send the data to the backend and returns the Promise;
 
 async function sendOrder() {
     let contact = getFormValues();
@@ -397,7 +408,12 @@ async function sendOrder() {
     return orderObject;
 }
 
+// Get the button from DOM that sends the order.
+
 const orderButton = document.getElementById('order');
+
+// Add a click event listener to the button and calls a function that gets the order object sent from the backend, grabs the orderId and creates a new URL
+// with it. Then it calls the CART.contents and erases everything in the cart, then sync it. Finally, it redirects the user to the new URL;
 
 orderButton.addEventListener('click', async function(event) {
     event.preventDefault();
