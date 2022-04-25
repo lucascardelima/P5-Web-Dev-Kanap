@@ -1,4 +1,4 @@
-// Get DOM element
+// Get the orderId DOM element
 
 const orderIdDisplay = document.getElementById("orderId");
 
@@ -10,6 +10,11 @@ function getOrderId() {
     return productId = urlParams.get("orderId");
 };
 
+// Calls the getOrderId function and passes the returned value to the orderIdDisplay DOM element.
+
 let orderId = getOrderId();
+
+// Assigns the orderId value to the orderIdDisplay DOM element.
+
 orderIdDisplay.textContent = orderId;
 
