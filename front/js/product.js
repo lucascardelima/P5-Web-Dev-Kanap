@@ -95,12 +95,17 @@ const CART = {
     },
     // Adds a product to the cart contents array, passing the ID, color and quantity as arguments and syncs it to the local storage;
     add: function(id, productColor, qty) {
-        if(CART.find(id, productColor)) {
-            CART.increase(id, productColor, qty);
-        }else {
-            let productObject = {'_id' : id, 'quantity' : qty, 'color' : productColor};
-            CART.contents.push(productObject);
-            CART.sync();
+        if(productColor && qty) {
+            document.getElementById('submitErrorMsg').innerHTML = ''
+            if(CART.find(id, productColor)) {
+                CART.increase(id, productColor, qty);
+            }else {
+                let productObject = {'_id' : id, 'quantity' : qty, 'color' : productColor};
+                CART.contents.push(productObject);
+                CART.sync();
+            }
+        } else {
+            document.getElementById('submitErrorMsg').innerHTML = 'Select at least one color'
         }
     },
 };

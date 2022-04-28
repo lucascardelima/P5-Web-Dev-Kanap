@@ -275,7 +275,7 @@ deleteButton.addEventListener("click", deleteItem);
 // function passing products as an argument. 
 
 async function loadCart() {
-    const products =  await makeRequest("GET", "http://127.0.0.1:3000/api/products");
+    const products =  await makeRequest("GET", "http://localhost:3000/api/products");
     const cart = CART.get();
 
     buildCartPage(products, cart);   
