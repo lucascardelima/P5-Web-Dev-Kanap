@@ -306,8 +306,8 @@ getDOMElements(formsFields);
 
 // RegEx expressions to validade each form field;
 
-const regexFirstName = new RegExp(/^(([a-zA-Z]{1,})[ -]?){1,}$/g);
-const regexLastName = new RegExp(/^(([a-zA-Z]{1,})[ -]?){1,}$/g);
+const regexFirstName = new RegExp(/^(([a-zA-Z]{1,})[ -]?){1,}$/);
+const regexLastName = new RegExp(/^(([a-zA-Z]{1,})[ -]?){1,}$/);
 const regexAddress = new RegExp(/^(\d{1,5}){1}[ -]?(([a-zA-Z]{1,})[ -]?){1,}$/);
 const regexCity = new RegExp(/^(\w{1,})[ -]?$/);
 const regexEmail = new RegExp(/^(\w{1,})(\@{1})(\w{1,}[.])+((\w{1,})[ ]?)$/);
@@ -378,7 +378,7 @@ function getFormValues() {
             email: contactEmail.value
         };
         return formValues;
-    }
+    };
 };
 
 // Function that get all the products from the CART object, iterate over it and create a new array
@@ -400,12 +400,19 @@ function buildIdArray() {
 async function sendOrder() {
     let contact = getFormValues();
     let products = buildIdArray();
-    let orderDetails = {
-        contact: contact,
-        products: products
-    };
-    let orderObject = await makeRequest("POST", "http://127.0.0.1:3000/api/products/order", orderDetails);
-    return orderObject;
+    if (contact && products.length > 0) {
+        let orderDetails = {
+            contact: contact,
+            products: products
+        };
+        console.log(orderDetails);
+        console.log(products.length);
+        let orderObject = await makeRequest("POST", "http://localhost:3000/api/products/order", orderDetails);
+        return orderObject;
+    } else {
+    
+    }
+
 }
 
 // Get the button from DOM that sends the order.
@@ -418,10 +425,11 @@ const orderButton = document.getElementById('order');
 orderButton.addEventListener('click', async function(event) {
     event.preventDefault();
     let orderObject = await sendOrder();
-    let confirmationHref = 'http://127.0.0.1:3001/front/html/confirmation.html?orderId=' + orderObject.orderId;
-    CART.contents = [];
-    CART.sync();
-    window.location.href = confirmationHref;
-   
+    if (orderObject) {
+        let confirmationHref = 'http://localhost:3001/front/html/confirmation.html?orderId=' + orderObject.orderId;
+        CART.contents = [];
+        CART.sync();
+        window.location.href = confirmationHref;
+    }
 });
 
