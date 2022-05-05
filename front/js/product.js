@@ -58,9 +58,8 @@ function buildProductPage(product) {
 // function passing products as an argument;
 
 async function loadProducts() {
-    const products =  await makeRequest("GET", "http://localhost:3000/api/products");
     const id = getProductId();
-    const product = products.find(products => products._id == id);
+    const product =  await makeRequest("GET", "http://localhost:3000/api/products/" + id);
     
     buildProductPage(product);
 };

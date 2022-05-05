@@ -104,13 +104,13 @@ function createProducts(products, cart) {
 
         //Start creating the elements on the DOM.
         
-        /////ARTICLE ELEMENT.
+        ///ARTICLE ELEMENT.
         let article = document.createElement("article");
         article.classList.add("cart__item");
         article.setAttribute("data-id", cartProductId);
         article.setAttribute("data-color", cartProductColor);
 
-        ////IMAGE CONTAINER.
+        ///IMAGE CONTAINER.
         let imgContainer = document.createElement("div");
         imgContainer.classList.add("cart__item__img");
 
@@ -122,7 +122,7 @@ function createProducts(products, cart) {
         //Append Image to IMAGE CONTAINER.
         imgContainer.appendChild(img);
 
-        ////DESCRIPTION AND SETTINGS CONTAINER .
+        ///DESCRIPTION AND SETTINGS CONTAINER.
         let descriptionAndSettingsContainer = document.createElement("div");
         descriptionAndSettingsContainer.classList.add("cart__item__content");
 
@@ -257,7 +257,7 @@ function deleteItem(event) {
     }
 };
 
-//// EVENT LISTENERS ////
+/// EVENT LISTENERS 
 
 // Get the Quantity Changer button and adds an event listener to it.
 const changeQuantityInput = document.getElementById("cart__items");
@@ -267,7 +267,7 @@ changeQuantityInput.addEventListener("change", changeQuantity);
 const deleteButton = document.getElementById("cart__items");
 deleteButton.addEventListener("click", deleteItem);
 
-//// EVENT LISTENERS ////
+/// EVENT LISTENERS 
 
 
 // Asyncronous function that make a request for the makeRequest function and awaits for the Promise
@@ -311,6 +311,7 @@ const regexLastName = new RegExp(/^(([a-zA-Z]{1,})[ -]?){1,}$/);
 const regexAddress = new RegExp(/^(\d{1,5}){1}[ -]?(([a-zA-Z]{1,})[ -]?){1,}$/);
 const regexCity = new RegExp(/^(\w{1,})[ -]?$/);
 const regexEmail = new RegExp(/^(\w{1,})(\@{1})(\w{1,}[.])+((\w{1,})[ ]?)$/);
+
 
 // Validation functions for every form field;
 
