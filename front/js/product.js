@@ -127,3 +127,5 @@ function storageProductDetails() {
 
 addToCartBtn.addEventListener("click", storageProductDetails);
 
+
+
