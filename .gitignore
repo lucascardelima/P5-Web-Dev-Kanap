@@ -7,3 +7,4 @@ front/.DS_Store
 .DS_Store
 .gitignore
 front/.DS_Store
+node_modules
